@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.wp_deployment.name }}
+  namespace: {{ .Values.wp_namespace }}
+  labels:
+    app: {{ .Values.wp_deployment.appname }}
+spec:
+  replicas: {{ .Values.deployment_replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.wp_deployment.appname }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.wp_deployment.appname }}
+    spec:
+      containers:
+      - name: {{ .Values.wp_deployment.appname }}
+        image: {{ .Values.image }}:{{ .Values.tag }}
+        ports:
+        - containerPort:  {{ .Values.port}}
+        env:
+        - name: {{ .Values.wp_env.db_host }}
+          value: {{ .Values.mysql_service.name }}.{{ .Values.mysql_namespace }}
+        - name: {{ .Values.wp_env.db_user }}
+          value: {{ .Values.wp_env.user_value }}
+        - name: {{ .Values.wp_env.db_pass }}
+          value: {{ .Values.wp_env.kejsi2001 }}
+        - name: {{ .Values.wp_env.db_name }}
+          value: {{ .Values.wp_env.db_value }}
+
+
+
+

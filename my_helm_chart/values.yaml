@@ -1,0 +1,67 @@
+wp_deployment:
+  name: wordpress-deployment
+  appname: wordpress
+
+deployment_replicas: 1 
+wp_namespace: web
+image: "wordpress"
+tag: "latest"
+port: 80
+
+wp_env:
+  db_host: WORDPRESS_DB_HOST
+  db_user: WORDPRESS_DB_USER
+  user_value: kejsi
+  db_pass: WORDPRESS_DB_PASSWORD
+  pass_value: kejsi2001
+  db_name: WORDPRESS_DB_NAME
+  db_value: wordpress
+
+mysql_service:
+  name: mysql-service
+  app: mysql
+
+mysql_namespace: db
+
+
+ports:
+  protocol: TCP
+  port: 2000
+  targetPort: 80
+
+ports2:
+  protocol: TCP
+  port: 3306
+  targetPort: 3306
+
+stsf:
+  name: mysql-statefulset 
+  app: mysql
+  replicas: 1
+  serviceName: mysql-service
+  containerName: mysql
+  image: mysql
+  containerPort: 3306
+
+mysql_env:
+  mysqlname: MYSQL_DATABASE
+  mysqlvalue: wordpress
+  username:  MYSQL_USER
+  uservalue: kejsi
+  passname: MYSQL_PASSWORD
+  passvalue: kejsi2001
+  Rname: MYSQL_RANDOM_ROOT_PASSWORD
+  value: '1'
+
+
+volumeMounts:
+  mountPath: "/var/lib/mysql"
+  name: mysql-pv
+
+
+pvc:
+  name: sql-persistent-volume-claim
+  namespace: db
+  storageClassName: "hostpath"
+  accessModes: ReadWriteOnce
+  storage: 2Gi

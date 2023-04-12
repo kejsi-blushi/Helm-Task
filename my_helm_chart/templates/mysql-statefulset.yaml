@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.stsf.name }}
+  namespace: {{ .Values.mysql_namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.stsf.app }}
+  serviceName: {{ .Values.stsf.serviceName }}
+  replicas:  {{ .Values.stsf.replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.stsf.app }} 
+    spec:
+      containers:
+      - name: {{ .Values.stsf.containerName }}
+        image: {{ .Values.stsf.image }}
+        ports:
+        - containerPort: {{ .Values.stsf.containerPort }}
+        env:
+        - name: {{ .Values.mysql_env.mysqlname }}
+          value: "{{ .Values.mysql_env.mysqlvalue }}"
+        - name:  {{ .Values.mysql_env.username }}
+          value: "{{ .Values.mysql_env.uservalue }}"
+        - name: {{ .Values.mysql_env.passname }}
+          value: "{{ .Values.mysql_env.passvalue }}"
+        - name: {{ .Values.mysql_env.Rname }}
+          value: "{{ .Values.mysql_env.value }}"
+
+        volumeMounts:
+          - mountPath: {{ .Values.volumeMounts.mountPath }}
+            name:  {{ .Values.volumeMounts.name }}
+      volumes:
+      - name:  {{ .Values.volumeMounts.name }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.pvc.name }}
+      
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.pvc.name }}
+  namespace: {{ .Values.mysql_namespace }}
+spec:
+  storageClassName: {{ .Values.pvc.storageClassName }}
+  accessModes:
+    - {{ .Values.pvc.accessModes }}
+  resources:
+    requests:
+      storage: {{ .Values.pvc.storage }}
+
+
+
+
